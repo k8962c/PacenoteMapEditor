@@ -11,7 +11,17 @@ annotateOffsetZ = -2
 ## SETUP FIGURE
 fig = plt.figure()
 plt.style.use('seaborn-whitegrid')
-plt.grid(which='both')
+#plt.grid(which='both')
+plt.grid(False)
+
+
+#major_ticks = np.arange(0, 101, 20)
+#minor_ticks = np.arange(0, 101, 5)
+
+plt.xticks([0])
+plt.yticks([0])
+
+
 # Title - could use stage name later?
 fig.canvas.manager.set_window_title('Stage Pacenotes Trace')
 
@@ -30,6 +40,9 @@ def plotRedraw( plotData ):
 		plt.annotate( call, (notesXZ[0][i]+annotateOffsetX, notesXZ[1][i]+annotateOffsetZ) )		
 	plt.xlim([-100,+100])
 	plt.ylim([-100,+100])
+	plt.xticks([0])
+	plt.yticks([0])
+	plt.grid('major')
 	fig.canvas.draw_idle()
 
 

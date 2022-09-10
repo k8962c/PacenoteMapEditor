@@ -1,22 +1,33 @@
 
-Firstly thanks to:
-	Palo Samo for creating DiRTy Pacenotes and giving inspiration for doing this
-	strawhatboy & ZTMZClub Pacenote Tool contributors for pacenote files of the original game to work with
-	bn880 for RaceTrack Data Acquisition (RDA) which this is intended to work with
+### SETUP:
+For a given stage pacenote file (.txt)
+Make another file with identical name but with (.inf) extension
+In the inf file, enter:
+- Filenames for the RDA trace csv
+- Corresponding recce screen recording video file
+- 'starttime', which is the time in the video when the stage starts (at "Go!")
+Sorry this is a bit manual, but seemed the easiest way to make it more robust and you can keep track of different recce runs.
+
+example files:
+El Rodeo.txt
+El Rodeo.inf
+El Rodeo 2022-08-30.csv		RDA trace
+El Rodeo 2022-08-30.mkv		Screen Recording of the recce
+
+Example contents of El Rodeo.inf:
+trace=El Rodeo 2022-08-30.csv
+video=El Rodeo 2022-08-30.mkv
+videostart=38
 
 
-Note this I'm sure if very buggy, and is work in progress...
-Known Bugs:
-	It will Crash/Hang if you :
-		Open a stage where the pacenotes file has a call after the end of the stage.
-		Open a stage without a corresponding .csv map trace (from Racetrack Data Aquisition mod).
-
-Features:
+### Features:
 	Use Racetrack Data Aquisition mod to record a .csv map trace of a stage.
 
-	VERY SLOW TO LOAD the .EXE
+	The .EXE is VERY SLOW to open up.
 		(This if the first .exe I've made from python, so no clue why this is so slow)
 		If you want speed, just use the raw python, there aren't too many non-standard libraries required.
+		Note I'm using "windows-curses" package for a windows curses implementation (https://github.com/zephyrproject-rtos/windows-curses)
+			Should be installable using pip install windows-curses
 
 	When loading a pacenote file:
 		It rounds off distance to 10m.
@@ -26,9 +37,26 @@ Features:
 
 	When saving, it will first copy the old file to a backup file with modified date string in filename.
 
+### Known Bugs:
+	It will Crash/Hang if you :
+		Open a stage where the pacenotes file has a call after the end of the stage.
+		Open a stage without a corresponding .csv map trace (from Racetrack Data Aquisition mod).
+	TBC what happens if you open a stage without a corresponding video file recording, probably will crash, but this makes it so much better to use.
+
+### Thanks to:
+	Palo Samo for creating DiRTy Pacenotes and giving inspiration for doing this
+	strawhatboy & ZTMZClub Pacenote Tool contributors for pacenote files of the original game to work with
+	bn880 for RaceTrack Data Acquisition (RDA) which this is intended to work with
+
+
+
+##### PLAYBACK KEYS #####
+SPACE				Play/Pause Video
+m					Mute
++/-					Volume up/down
+
 
 ##### EDITOR KEYS #####
-
 Up/Down Cursors		Move forward backwards through stage, 10m at a time.
 PageUp/Down			Jump to the next/previous pacenote
 Home/End			Jump to start/end of stage

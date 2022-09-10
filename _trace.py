@@ -10,6 +10,8 @@ import _pacenotes
 class classTrace:
 	TRACE_RESOLUTION = 5	# resolution of the displayed road trace
 	NOTE_RESOLUTION = None 	# resolution of note coordinate data (angle etc)
+	CULL_AHEAD = 100		# plot size ahead/behind
+	CULL_BEHIND = 20		# plot size ahead/behind
 
 	def __init__(self, newFilename, noteResolution ):
 		self.filename = newFilename
@@ -35,6 +37,18 @@ class classTrace:
 
 	def getMaxDist(self):
 		return( max(self.traceDistCoords.keys()) )
+
+	def getDistFromTime(self, time):
+		for d, v in sorted(self.traceDistCoords.items()):
+			( X, Z, angle, T ) = v
+			if T >= time:
+				return d
+		# if nothing found, just return last entry in list
+		return max(self.traceDistCoords.keys())
+
+	def getTimeFromDist(self, dist):
+		( X, Z, angle, T ) = self.traceDistCoords[self.roundDist(dist, self.NOTE_RESOLUTION )]
+		return T
 
 	def roundDist(self, strdistRaw, resolution = None ):
 		if resolution is None:
@@ -102,8 +116,19 @@ class classTrace:
 		# Get current coordinate based on distance
 		( X, Z, angle, T ) = self.traceDistCoords[curr_distance]
 		#
+		# Cull trace data infront and behind current distance
+		distStart = max(min( self.traceDistCoords.keys() ), curr_distance-self.CULL_BEHIND )
+		distEnd = min( max( self.traceDistCoords.keys() ), curr_distance+self.CULL_AHEAD )
+		indexStart = round(distStart/self.TRACE_RESOLUTION)
+		indexEnd = round(distEnd/self.TRACE_RESOLUTION)
+		#get Culled X/Z
+		#indexStart = 5
+		#indexEnd = 10
+		culledX = self.traceX[indexStart:indexEnd]
+		culledZ = self.traceZ[indexStart:indexEnd]
+		#
 		# Shift the trace to align with current location
-		centredTracePoints = [[val - X for val in self.traceX], [val - Z for val in self.traceZ] ]
+		centredTracePoints = [[val - X for val in culledX], [val - Z for val in culledZ] ]
 		# Rotation Matrix
 		R = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle),  np.cos(angle)]])
 		# Rotate the trace so forwards is up
@@ -118,11 +143,15 @@ class classTrace:
 		notePointsX = []
 		notePointsZ = []
 		noteCalls = []
+		# Cull Distances
+		distStart = round(curr_distance-self.CULL_BEHIND)
+		distEnd = round(curr_distance+self.CULL_AHEAD)
 		for dist,note in Notes.items():
-			( nX, nZ, nA, nT ) = self.traceDistCoords[dist]
-			notePointsX.append( nX - X )
-			notePointsZ.append( nZ - Z )
-			noteCalls.append( note[_pacenotes.classPacenotes.CALLS] )
+			if distStart <= dist <= distEnd:
+				( nX, nZ, nA, nT ) = self.traceDistCoords[dist]
+				notePointsX.append( nX - X )
+				notePointsZ.append( nZ - Z )
+				noteCalls.append( note[_pacenotes.classPacenotes.CALLS] )
 		# Shift the trace to align with current location
 		centredNotePoints = [ notePointsX, notePointsZ ]
 		# Rotation Matrix
