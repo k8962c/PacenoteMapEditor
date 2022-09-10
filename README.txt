@@ -87,4 +87,3 @@ F5					Redraw screen in case of curses messup
 F6					SAVE
 F9					LOAD (will wipe any changes made)
 F12					QUIT (won't save before quitting)
-
